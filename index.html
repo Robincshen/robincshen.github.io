@@ -5,33 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <!-- ═══════════════════════════════════════════════════════════════
-     怎么改这个文件
+     编辑说明
      ───────────────────────────────────────────────────────────────
-     1. 所有需要你填的地方都用  【改这里】  标出来了,搜索这四个字
-        就能逐个找到。
-     2. 想删掉某一整块(比如 News),把它的 <section>...</section>
-        整段删掉即可,不会影响别的部分。
-     3. 想加一篇论文,复制一个 <li class="pub">...</li> 粘贴,改内容。
-     4. 配色和字号在下面 :root 里集中改,不用翻 CSS。
-     5. 改完保存 → 传到 GitHub → 等一分钟刷新。
+     · 搜索  【改这里】  可逐个定位需要你填的位置
+     · 照片大小改 :root 里的 --photo,配色改 --link
+     · 加论文 = 复制一整个 <li class="pub">...</li>
      ═══════════════════════════════════════════════════════════════ -->
 
-<!-- 【改这里】浏览器标签页标题 + 搜索引擎摘要 -->
 <title>Cong (Robin) Shen</title>
-<meta name="description" content="PhD student in ECE at the University of Minnesota. Generative AI for chip thermal and power simulation.">
+<meta name="description" content="PhD student in ECE at the University of Minnesota. Generative AI for real-time chip thermal and power simulation.">
 
 <style>
-/* ═══════════════ 全局设置:配色和尺寸都在这里改 ═══════════════ */
 :root{
-  --text:      #1a1a1a;   /* 正文颜色 */
-  --muted:     #6b7280;   /* 次要文字(日期、作者列表) */
-  --link:      #7a0019;   /* 链接色 — 现在是明大的栗色,想换就改这一行 */
-  --line:      #e5e7eb;   /* 分隔线 */
-  --bg:        #ffffff;   /* 背景 */
-  --tag-bg:    #f3f4f6;   /* venue 标签底色 */
-  --width:     780px;     /* 内容区宽度,想更宽就调大 */
-  --size:      16.5px;    /* 正文字号 */
-  --photo: 150px; 
+  --text:   #1a1a1a;
+  --muted:  #6b7280;
+  --link:   #7a0019;      /* 主色 */
+  --line:   #e5e7eb;
+  --bg:     #ffffff;
+  --tag-bg: #f3f4f6;
+  --width:  830px;
+  --size:   16.5px;
+  --photo:  150px;        /* 照片尺寸,只改这一个数字 */
 }
 
 *{box-sizing:border-box}
@@ -39,242 +33,419 @@ body{
   margin:0 auto; padding:56px 24px 80px; max-width:var(--width);
   background:var(--bg); color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",
-              "Noto Sans SC",Arial,sans-serif;
+              "Noto Sans SC","Microsoft YaHei",Arial,sans-serif;
   font-size:var(--size); line-height:1.7;
   -webkit-font-smoothing:antialiased;
 }
 a{color:var(--link); text-decoration:none; border-bottom:1px solid transparent}
 a:hover{border-bottom-color:var(--link)}
 
-h1{font-size:1.95em; margin:0 0 4px; font-weight:600; letter-spacing:-.01em}
-h2{font-size:1.12em; margin:44px 0 16px; font-weight:600;
+h1{font-size:1.95em; margin:0 0 10px; font-weight:600; letter-spacing:-.01em}
+h1 .zh{
+  font-size:.52em; font-weight:400; color:var(--muted);
+  letter-spacing:.18em; margin-left:14px; white-space:nowrap;
+}
+h2{font-size:1.12em; margin:46px 0 18px; font-weight:600;
    padding-bottom:8px; border-bottom:1px solid var(--line)}
 h3{font-size:1em; margin:0 0 2px; font-weight:600}
+h4{font-size:.88em; margin:26px 0 10px; font-weight:600; color:var(--muted);
+   text-transform:uppercase; letter-spacing:.07em}
 p{margin:0 0 14px}
 
-/* ── 顶部:照片 + 姓名 ── */
-.top{display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap}
+/* 顶部 */
+.top{display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap}
 .top img{
-  width: var(--photo);
-  height: var(--photo);
-  object-fit: cover;
-  border-radius: 6px;
-  flex-shrink: 0;
-  display: block;
+  width:var(--photo); height:var(--photo);
+  aspect-ratio:1/1; object-fit:cover; object-position:50% 50%;
+  border-radius:6px; flex-shrink:0; display:block;
 }
-.top .who{flex:1; min-width:260px}
-.zh{color:var(--muted); font-size:.95em; margin:0 0 10px}
-.affil{margin:0 0 12px}
+.top .who{flex:1; min-width:280px}
+.affil{margin:0 0 14px}
 .affil span{color:var(--muted)}
-
-/* ── 链接行 ── */
 .links{margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:8px 16px}
 .links li{font-size:.94em}
 
-/* ── News ── */
+/* News */
 .news{margin:0; padding:0; list-style:none}
-.news li{display:flex; gap:16px; padding:7px 0; align-items:baseline}
-.news time{color:var(--muted); font-size:.88em; white-space:nowrap; min-width:76px;
+.news li{display:flex; gap:18px; padding:7px 0; align-items:baseline}
+.news time{color:var(--muted); font-size:.88em; white-space:nowrap; min-width:78px;
            font-variant-numeric:tabular-nums}
 
-/* ── 论文列表 ── */
+/* 论文 / 专利 */
 .pubs{margin:0; padding:0; list-style:none}
-.pub{padding:16px 0; border-bottom:1px solid var(--line)}
+.pub{display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--line)}
 .pub:last-child{border-bottom:none}
-.pub .authors{color:var(--muted); font-size:.92em; margin:3px 0 6px}
-.pub .authors b{color:var(--text); font-weight:600}   /* 你自己的名字加粗 */
-.pub .venue{color:var(--muted); font-size:.92em}
+.pub .id{
+  color:var(--muted); font-size:.85em; min-width:36px; flex-shrink:0;
+  font-variant-numeric:tabular-nums; padding-top:3px;
+}
+.pub .body{flex:1}
+.pub .authors{margin:0 0 3px; font-size:.94em; color:var(--muted)}
+.pub .authors b{font-weight:600; color:var(--text)}   /* 自己的名字 */
+.pub .title{margin:0 0 4px}
+.pub .venue{margin:0; color:var(--muted); font-size:.9em}
+.pub .venue em{font-style:italic}
 .tag{
-  display:inline-block; padding:1px 7px; margin-right:8px; border-radius:3px;
+  display:inline-block; padding:1px 7px; border-radius:3px; margin-right:7px;
   background:var(--tag-bg); color:var(--muted);
   font-size:.78em; letter-spacing:.03em; vertical-align:1px;
 }
-.note{color:var(--muted); font-size:.85em; margin-top:10px}
+.tag.hi{background:#fdf2f4; color:#9b1c34; font-weight:600}
+.role{color:var(--text); font-weight:600}
+.note{color:var(--muted); font-size:.86em; margin-top:16px}
 
-/* ── 教育经历 ── */
+/* 教育 + 奖项 */
 .edu{margin:0; padding:0; list-style:none}
-.edu li{padding:12px 0; border-bottom:1px solid var(--line)}
-.edu li:last-child{border-bottom:none}
+.edu > li{padding:16px 0; border-bottom:1px solid var(--line)}
+.edu > li:last-child{border-bottom:none}
 .edu .when{color:var(--muted); font-size:.9em}
-.edu p{margin:4px 0 0; color:var(--muted); font-size:.94em}
+.edu .meta{margin:5px 0 0; color:var(--muted); font-size:.94em}
+.awards{margin:9px 0 0; padding:0 0 0 18px; color:var(--muted); font-size:.92em}
+.awards li{margin:2px 0}
+.awards .cn{opacity:.72}
+
+/* 技能 */
+.skills{margin:0; padding:0; list-style:none}
+.skills li{display:flex; gap:16px; padding:9px 0; flex-wrap:wrap;
+           border-bottom:1px solid var(--line)}
+.skills li:last-child{border-bottom:none}
+.skills .k{min-width:136px; color:var(--muted); font-size:.92em; flex-shrink:0}
+.skills .v{flex:1; min-width:220px}
 
 footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
        color:var(--muted); font-size:.86em}
 
-/* ── 手机适配:不用管,自动生效 ── */
-@media (max-width:560px){
+@media (max-width:600px){
   body{padding:32px 18px 56px}
-  .top{gap:18px}
-  .top img{width:96px; height:96px}
+  h1 .zh{display:block; margin:6px 0 0; font-size:.45em; letter-spacing:.12em}
+  .top{gap:20px}
   .news li{flex-direction:column; gap:0}
   .news time{min-width:0}
+  .pub{flex-direction:column; gap:4px}
+  .pub .id{padding-top:0}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════ 顶部区块 ═══════════════════ -->
+<!-- ══════════════ 顶部 ══════════════ -->
 <header class="top">
 
-  <!-- 【改这里】照片:把图片文件传到仓库,文件名写在 src 里。
-       暂时没照片就把整个 <img> 这一行删掉,布局会自动调整。 -->
   <img src="photo.jpg" alt="Cong (Robin) Shen">
 
   <div class="who">
-    <!-- 【改这里】姓名 -->
-    <h1>Cong (Robin) Shen</h1>
-    <p class="zh">沈聪</p>
+    <h1>Cong (Robin) Shen <span class="zh">沈聪</span></h1>
 
-    <!-- 【改这里】身份和单位 -->
     <p class="affil">
       PhD Student, Electrical &amp; Computer Engineering<br>
       <span>University of Minnesota, Twin Cities</span><br>
-      <span>Advised by Prof. Yu (Kevin) Cao, MEC Group</span>
+      <span>Advised by
+        <a href="https://cse.umn.edu/ece/yu-kevin-cao">Prof. Yu (Kevin) Cao</a>,
+        MEC Group</span>
     </p>
 
+    <ul class="links">
+      <li><a href="mailto:shen0706@umn.edu">shen0706@umn.edu</a></li>
+      <li><a href="https://www.linkedin.com/in/cong-robin-shen-4102a4381/">LinkedIn</a></li>
+      <li><a href="https://github.com/Robincshen">GitHub</a></li>
+    </ul>
   </div>
 </header>
 
 
-<!-- ═══════════════════ 简介 ═══════════════════ -->
+<!-- ══════════════ About ══════════════ -->
 <h2>About</h2>
 
-<!-- 【改这里】自我介绍。想写几段就写几段,每段一个 <p>...</p> -->
 <p>
-  I work on generative AI for chip thermal and power simulation, and on using it to
-  drive more efficient thermal management. Thermal analysis of 3D-stacked chiplets
-  currently relies on solvers that take hours per design point, which puts it out of
-  reach of the design loop it needs to inform. My research replaces parts of that
-  computation with learned models.
+  I work on generative AI for chip thermal and power simulation, and on using it to drive
+  more efficient thermal management. The aim is real-time temperature and power prediction,
+  accurate enough to support hotspot-triggered dynamic power management on chip rather than
+  thermal information that only arrives after an offline solve.
 </p>
 <p>
-  Before joining Minnesota I worked on device reliability and compact modeling at
-  Peking University. I have 11 publications to date, 4 as first or co-first author,
-  including a co-first-authored paper in <i>Nature</i>.
+  Before joining Minnesota I worked on algorithm-based device reliability and compact
+  modeling at Peking University. I have 11 publications to date, 4 as first or co-first
+  author, in journals and conferences including <i>Nature</i> and IEEE Transactions on
+  Electron Devices.
 </p>
 
 
-<!-- ═══════════════════ News(可选,整块可删) ═══════════════════ -->
+<!-- ══════════════ News ══════════════ -->
 <h2>News</h2>
 
-<!-- 【改这里】最新动态。加一条就复制一个 <li>...</li> -->
 <ul class="news">
   <li><time>2026-07</time><span>Attended DAC 2026 in Long Beach, CA.</span></li>
+  <li><time>2026-07</time><span>Attended ICMC 2026 in Long Beach, CA.</span></li>
+  <li><time>2026-03</time><span>Attended IRPS 2026 in Tucson, AZ.</span></li>
   <li><time>2025-09</time><span>Started my PhD at the University of Minnesota.</span></li>
 </ul>
 
 
-<!-- ═══════════════════ 研究方向 ═══════════════════ -->
-<h2>Research</h2>
-
-<!-- 【改这里】研究方向。每个方向一个 <h3> + <p> -->
-<h3>Generative models for full-chip thermal and power maps</h3>
-<p>
-  Reconstructing full-resolution temperature and power maps from a small number of
-  on-die sensors and performance counters, with calibrated uncertainty, so that
-  thermal information is available at runtime rather than after an offline solve.
-</p>
-
-<h3>Learned surrogates for 3D-IC and chiplet stacks</h3>
-<p>
-  Graph-based models that transfer across floorplans and stack configurations instead
-  of being refit for every new design.
-</p>
-
-<h3>Device reliability and compact modeling</h3>
-<p>
-  Earlier work on neural-network methods for extracting hot-carrier degradation model
-  parameters, along with self-heating and electrothermal simulation for advanced nodes.
-</p>
-
-
-<!-- ═══════════════════ 论文列表 ═══════════════════ -->
+<!-- ══════════════ Publications ══════════════ -->
 <h2>Publications</h2>
 
-<!-- 【改这里】论文。加一篇就复制一整个 <li class="pub">...</li>
-     自己的名字用 <b>C. Shen</b> 包起来会自动加粗。
-     标题想加链接就写成 <a href="网址">标题</a> -->
+<h4>Journal</h4>
 <ul class="pubs">
 
   <li class="pub">
-    <span class="tag">Nature 2024</span>
-    <h3>A hot-emitter transistor based on stimulated emission of heated carriers</h3>
-    <p class="authors">
-      C. Liu<sup>&dagger;</sup>, X. Z. Wang<sup>&dagger;</sup>, <b>C. Shen<sup>&dagger;</sup></b>,
-      L. P. Ma, X. Q. Yang, Y. Kong, W. Ma, Y. Liang, et al.
-    </p>
-    <p class="venue"><i>Nature</i> 632(8026), 782&ndash;787 &nbsp;·&nbsp; <sup>&dagger;</sup> equal contribution</p>
+    <span class="id">[J1]</span>
+    <div class="body">
+      <p class="authors">
+        Chi Liu<sup>&lowast;#</sup>, Xin-Zhe Wang<sup>#</sup>, <b>Cong Shen<sup>#</sup></b>,
+        Lai-Peng Ma, Xu-Qi Yang, Yue Kong, Wei Ma, Yan Liang, et al.
+      </p>
+      <p class="title">A hot-emitter transistor based on stimulated emission of heated carriers</p>
+      <p class="venue">
+        <span class="tag hi">Nature</span>
+        <em>Nature</em> 632(8026), 782&ndash;787, 2024 &nbsp;&middot;&nbsp;
+        <span class="role">Co-first author</span> &nbsp;&middot;&nbsp;
+        <a href="https://www.nature.com/articles/s41586-024-07785-3">Paper</a>
+      </p>
+    </div>
   </li>
 
   <li class="pub">
-    <span class="tag">IEEE T-ED 2025</span>
-    <h3>Dynamic modeling of parametric shifts in FinFETs under hot carrier degradation</h3>
-    <p class="authors">
-      <b>C. Shen</b>, Y. Li, B. Peng, Z. Wang, Y. Xue, Y. Zhao, P. Ren, L. Zhang, R. Wang
-    </p>
-    <p class="venue">IEEE Transactions on Electron Devices 73(1), 63&ndash;70</p>
+    <span class="id">[J2]</span>
+    <div class="body">
+      <p class="authors">
+        <b>C. Shen</b>, Y. Li, B. Peng, Z. Wang, Y. Xue, Y. Zhao, P. Ren, L. Zhang, R. Wang
+      </p>
+      <p class="title">Dynamic Modeling of Parametric Shifts in FinFETs Under Hot Carrier Degradations</p>
+      <p class="venue">
+        <span class="tag">IEEE T-ED</span>
+        IEEE Transactions on Electron Devices 73(1), 63&ndash;70, 2025 &nbsp;&middot;&nbsp;
+        <a href="https://ieeexplore.ieee.org/abstract/document/11272970">Paper</a>
+      </p>
+    </div>
   </li>
 
   <li class="pub">
-    <span class="tag">IEEE JEDS 2024</span>
-    <h3>A neural network approach for parameterization of hot carrier degradation models</h3>
-    <p class="authors"><b>C. Shen</b>, Y. Li, Z. Wang, L. Zhang, R. Wang, R. Huang</p>
-    <p class="venue">IEEE Journal of the Electron Devices Society 13, 756&ndash;761</p>
+    <span class="id">[J3]</span>
+    <div class="body">
+      <p class="authors">Y. Li, S. Chen, <b>C. Shen</b>, Z. Sun, R. Wang, L. Zhang</p>
+      <p class="title">A Dynamic Time Evolution Method for Accelerating Self-Heating Simulations of Advanced Technologies</p>
+      <p class="venue">
+        <span class="tag">IEEE T-ED</span>
+        IEEE Transactions on Electron Devices, 2025 &nbsp;&middot;&nbsp;
+        <a href="https://ieeexplore.ieee.org/abstract/document/11215685">Paper</a>
+      </p>
+    </div>
   </li>
 
   <li class="pub">
-    <span class="tag">EDTM 2024</span>
-    <h3>A neural network based fast parameter extraction of compact hot carrier degradation model in FinFETs</h3>
-    <p class="authors">
-      <b>C. Shen</b>, Y. Li, W. Dai, X. Zhang, Z. Wang, Z. Ji, L. Zhang, R. Wang, R. Huang
-    </p>
-    <p class="venue">IEEE Electron Devices Technology &amp; Manufacturing Conference, 1&ndash;3</p>
+    <span class="id">[J4]</span>
+    <div class="body">
+      <p class="authors">Y. Li, <b>C. Shen</b>, S. Chen, Z. Sun, Z. Wang, R. Wang, L. Zhang</p>
+      <p class="title">Cross-Layer Modeling and Simulation for Electrothermal-Reliability With Backside Power Delivery Networks</p>
+      <p class="venue">
+        <span class="tag">IEEE JEDS</span>
+        IEEE Journal of the Electron Devices Society, 2025 &nbsp;&middot;&nbsp;
+        <a href="https://ieeexplore.ieee.org/abstract/document/11145900">Paper</a>
+      </p>
+    </div>
   </li>
 
   <li class="pub">
-    <span class="tag">IEDM 2023</span>
-    <h3>New insights into the interface trap generation during hot carrier degradation</h3>
-    <p class="authors">Z. Wang, H. Lu, Z. Sun, <b>C. Shen</b>, B. Peng, W. F. Li, Y. Xue, D. Wang, Z. Ji</p>
-    <p class="venue">IEEE International Electron Devices Meeting, 1&ndash;4</p>
+    <span class="id">[J5]</span>
+    <div class="body">
+      <p class="authors"><b>C. Shen</b>, Y. Li, Z. Wang, L. Zhang, R. Wang, R. Huang</p>
+      <p class="title">A Neural Network Approach for Parameterizations of Hot Carrier Degradation Models</p>
+      <p class="venue">
+        <span class="tag">IEEE JEDS</span>
+        IEEE Journal of the Electron Devices Society 13, 756&ndash;761, 2024 &nbsp;&middot;&nbsp;
+        <a href="https://ieeexplore.ieee.org/abstract/document/10749970">Paper</a>
+      </p>
+    </div>
   </li>
 
   <li class="pub">
-    <span class="tag">IEEE JEDS 2025</span>
-    <h3>Cross-layer modeling and simulation for electrothermal reliability with backside power delivery networks</h3>
-    <p class="authors">Y. Li, <b>C. Shen</b>, S. Chen, Z. Sun, Z. Wang, R. Wang, L. Zhang</p>
-    <p class="venue">IEEE Journal of the Electron Devices Society</p>
+    <span class="id">[J6]</span>
+    <div class="body">
+      <p class="authors">Y. Li, Y. Xue, Z. Sun, <b>C. Shen</b>, P. Ren, Z. Ji, L. Zhang, R. Wang</p>
+      <p class="title">A Device-Circuit Aging Simulation Framework Integrating Trap-Based Models and Sensitivity Analysis for FinFET Technology</p>
+      <p class="venue">
+        <span class="tag">IEEE T-ED</span>
+        IEEE Transactions on Electron Devices 71(1), 206&ndash;212, 2023 &nbsp;&middot;&nbsp;
+        <a href="https://ieeexplore.ieee.org/abstract/document/10286429">Paper</a>
+      </p>
+    </div>
+  </li>
+
+  <li class="pub">
+    <span class="id">[J7]</span>
+    <div class="body">
+      <p class="authors">M. Liu, Z. Sun, H. Lu, <b>C. Shen</b>, L. Zhang, R. Wang, R. Huang</p>
+      <p class="title">A Coupling Mechanism between Flicker Noise and Hot Carrier Degradations in FinFETs</p>
+      <p class="venue">
+        <span class="tag">Nanomaterials</span>
+        <em>Nanomaterials</em> 13(9), 1507, 2023 &nbsp;&middot;&nbsp;
+        <a href="https://www.mdpi.com/2079-4991/13/9/1507">Paper</a>
+      </p>
+    </div>
   </li>
 
 </ul>
 
-<!-- 【改这里】把 # 换成你的 Google Scholar 网址 -->
-<p class="note">Full publication list on <a href="#">Google Scholar</a>.</p>
+<h4>Conference</h4>
+<ul class="pubs">
+
+  <li class="pub">
+    <span class="id">[C1]</span>
+    <div class="body">
+      <p class="authors">
+        <b>C. Shen</b>, Y. Li, W. Dai, X. Zhang, Z. Wang, Z. Ji, L. Zhang, R. Wang, R. Huang
+      </p>
+      <p class="title">A neural network based fast parameter extraction of compact hot carrier degradation model in FinFETs</p>
+      <p class="venue">
+        <span class="tag">EDTM 2024</span>
+        IEEE Electron Devices Technology &amp; Manufacturing Conference, 1&ndash;3, oral &nbsp;&middot;&nbsp;
+        <a href="https://ieeexplore.ieee.org/abstract/document/10511335">Paper</a>
+      </p>
+    </div>
+  </li>
+
+  <li class="pub">
+    <span class="id">[C2]</span>
+    <div class="body">
+      <p class="authors">X. Zhang, F. Zhang, <b>C. Shen</b>, Z. Wang, R. Wang, L. Zhang, R. Huang</p>
+      <p class="title">Modeling the Temperature-Dependence of Silicon Diode with Fermi-Dirac Statistics down to 50K</p>
+      <p class="venue">
+        <span class="tag">ISEDA 2024</span>
+        International Symposium of Electronics Design Automation, 37&ndash;41 &nbsp;&middot;&nbsp;
+        <a href="https://ieeexplore.ieee.org/abstract/document/10617564">Paper</a>
+      </p>
+    </div>
+  </li>
+
+  <li class="pub">
+    <span class="id">[C3]</span>
+    <div class="body">
+      <p class="authors">
+        Z. Wang, H. Lu, Z. Sun, <b>C. Shen</b>, B. Peng, W. F. Li, Y. Xue, D. Wang, Z. Ji, et al.
+      </p>
+      <p class="title">New insights into the interface trap generation during hot carrier degradation: Impacts of full-band electronic resonance, (100) vs (110), and nMOS vs pMOS</p>
+      <p class="venue">
+        <span class="tag">IEDM 2023</span>
+        IEEE International Electron Devices Meeting, 1&ndash;4 &nbsp;&middot;&nbsp;
+        <a href="https://ieeexplore.ieee.org/abstract/document/10413788">Paper</a>
+      </p>
+    </div>
+  </li>
+
+  <li class="pub">
+    <span class="id">[C4]</span>
+    <div class="body">
+      <p class="authors">F. Zhang, <b>S. Cong</b>, K. Wang, L. Zhang, Q. Huang</p>
+      <p class="title">Investigation of the temperature dependence of Bulk-Si TFET and MFSB-TFET by TCAD simulation</p>
+      <p class="venue">
+        <span class="tag">ICSICT 2022</span>
+        IEEE International Conference on Solid-State &amp; Integrated Circuit Technology &nbsp;&middot;&nbsp;
+        <a href="https://ieeexplore.ieee.org/abstract/document/9963410">Paper</a>
+      </p>
+    </div>
+  </li>
+
+</ul>
+
+<p class="note">
+  <sup>#</sup> Equal contribution &nbsp;&middot;&nbsp; <sup>&lowast;</sup> Corresponding author
+</p>
 
 
-<!-- ═══════════════════ 教育经历 ═══════════════════ -->
+<!-- ══════════════ Patents ══════════════ -->
+<h2>Patents</h2>
+
+<ul class="pubs">
+  <li class="pub">
+    <span class="id">[P1]</span>
+    <div class="body">
+      <p class="authors">Lining Zhang, <b>Cong Shen</b>, Yu Li, Runsheng Wang</p>
+      <p class="title">Parameter extraction methods for aging models of semiconductor devices</p>
+      <p class="venue">Chinese Patent</p>
+    </div>
+  </li>
+  <li class="pub">
+    <span class="id">[P2]</span>
+    <div class="body">
+      <p class="authors">Lining Zhang, <b>Cong Shen</b>, Yu Li, Runsheng Wang</p>
+      <p class="title">A modeling and simulation prediction method for aging effects in semiconductor devices</p>
+      <p class="venue">Chinese Patent</p>
+    </div>
+  </li>
+</ul>
+
+
+<!-- ══════════════ Education ══════════════ -->
 <h2>Education</h2>
 
 <ul class="edu">
+
   <li>
-    <h3>PhD, Electrical &amp; Computer Engineering</h3>
-    <span class="when">University of Minnesota, Twin Cities &nbsp;·&nbsp; 2025 &ndash; present</span>
+    <h3>PhD in Electrical &amp; Computer Engineering</h3>
+    <span class="when">University of Minnesota, Twin Cities &nbsp;&middot;&nbsp; Sep. 2025 &ndash; present</span>
+    <p class="meta">Advised by
+      <a href="https://cse.umn.edu/ece/yu-kevin-cao">Prof. Yu (Kevin) Cao</a>, MEC Group</p>
+  </li>
+
+  <li>
+    <h3>M.Sc. in Integrated Circuit</h3>
+    <span class="when">Peking University, School of Electronic and Computer Engineering
+      &nbsp;&middot;&nbsp; Sep. 2022 &ndash; Jun. 2025</span>
+    <p class="meta">GPA 3.7/4.0, ranked 1/62 &nbsp;&middot;&nbsp; Advised by
+      <a href="https://www.ece.pku.edu.cn/en/info/1057/1314.htm">Prof. Lining Zhang</a></p>
+
+    <!-- 【改这里】奖项中文名请对照证书核实 -->
+    <ul class="awards">
+      <li>Outstanding Graduate of Beijing <span class="cn">(北京市优秀毕业生)</span></li>
+      <li>National Scholarship <span class="cn">(国家奖学金)</span></li>
+      <li>Outstanding Merit Student <span class="cn">(优秀学生)</span></li>
+      <li>Academic Innovation Award <span class="cn">(学术创新奖)</span></li>
+      <li>First Place, &ldquo;Baidu Cup&rdquo; Innovation Star Academy Competition
+          <span class="cn">(&ldquo;百度杯&rdquo;创新之星学院赛第一名)</span></li>
+    </ul>
+  </li>
+
+  <li>
+    <h3>B.S. in Microelectronics</h3>
+    <span class="when">Lanzhou University, School of Physical Science and Technology
+      &nbsp;&middot;&nbsp; Sep. 2018 &ndash; Jun. 2022</span>
+    <p class="meta">GPA 3.7/4.0, ranked 3/87</p>
+
+    <ul class="awards">
+      <li>Outstanding Graduate <span class="cn">(优秀毕业生)</span></li>
+      <li>First Prize Scholarship, 2018&ndash;2021 <span class="cn">(一等奖学金)</span></li>
+    </ul>
+  </li>
+
+</ul>
+
+
+<!-- ══════════════ Skills ══════════════ -->
+<h2>Skills</h2>
+
+<ul class="skills">
+  <li>
+    <span class="k">Programming</span>
+    <span class="v">Python, Verilog-A, MATLAB, C</span>
   </li>
   <li>
-    <h3>MEng, Electrical &amp; Computer Engineering</h3>
-    <span class="when">Peking University &nbsp;·&nbsp; 2022 &ndash; 2025</span>
-    <p>Device reliability and compact modeling.</p>
+    <span class="k">Machine learning</span>
+    <span class="v">PyTorch, diffusion models, graph neural networks</span>
   </li>
   <li>
-    <h3>BEng, Microelectronics</h3>
-    <span class="when">Lanzhou University &nbsp;·&nbsp; 2018 &ndash; 2022</span>
+    <span class="k">Software</span>
+    <span class="v">Sentaurus TCAD, HSPICE, Cadence Virtuoso, Cadence Celsius, Origin</span>
+  </li>
+  <li>
+    <span class="k">Languages</span>
+    <span class="v">Mandarin Chinese (native), English (professional working proficiency)</span>
   </li>
 </ul>
 
 
-<!-- ═══════════════════ 页脚 ═══════════════════ -->
+<!-- ══════════════ 页脚 ══════════════ -->
 <footer>
-  <!-- 【改这里】页脚 -->
-  Cong (Robin) Shen &nbsp;·&nbsp; Minneapolis, MN &nbsp;·&nbsp;
+  Cong (Robin) Shen &nbsp;&middot;&nbsp; Minneapolis, MN &nbsp;&middot;&nbsp;
   <a href="mailto:shen0706@umn.edu">shen0706@umn.edu</a>
 </footer>
 
