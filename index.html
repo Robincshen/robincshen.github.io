@@ -3,566 +3,284 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cong (Robin) Shen — Thermal modeling for 3D ICs</title>
-<meta name="description" content="PhD student in ECE at the University of Minnesota. I build generative models that predict where 3D-stacked chips get hot.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     怎么改这个文件
+     ───────────────────────────────────────────────────────────────
+     1. 所有需要你填的地方都用  【改这里】  标出来了,搜索这四个字
+        就能逐个找到。
+     2. 想删掉某一整块(比如 News),把它的 <section>...</section>
+        整段删掉即可,不会影响别的部分。
+     3. 想加一篇论文,复制一个 <li class="pub">...</li> 粘贴,改内容。
+     4. 配色和字号在下面 :root 里集中改,不用翻 CSS。
+     5. 改完保存 → 传到 GitHub → 等一分钟刷新。
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- 【改这里】浏览器标签页标题 + 搜索引擎摘要 -->
+<title>Cong (Robin) Shen</title>
+<meta name="description" content="PhD student in ECE at the University of Minnesota. Generative AI for chip thermal and power simulation.">
+
 <style>
-  :root{
-    /* palette derived from a thermal colormap over a silicon substrate */
-    --substrate:#0D1016;
-    --die:#141922;
-    --trace:#26303D;
-    --cool:#3E74AB;
-    --warm:#E8913A;
-    --hot:#F2545B;
-    --paper:#E7EBF1;
-    --muted:#8593A5;
+/* ═══════════════ 全局设置:配色和尺寸都在这里改 ═══════════════ */
+:root{
+  --text:      #1a1a1a;   /* 正文颜色 */
+  --muted:     #6b7280;   /* 次要文字(日期、作者列表) */
+  --link:      #7a0019;   /* 链接色 — 现在是明大的栗色,想换就改这一行 */
+  --line:      #e5e7eb;   /* 分隔线 */
+  --bg:        #ffffff;   /* 背景 */
+  --tag-bg:    #f3f4f6;   /* venue 标签底色 */
+  --width:     780px;     /* 内容区宽度,想更宽就调大 */
+  --size:      16.5px;    /* 正文字号 */
+}
 
-    --rail:74px;
-    --gutter:clamp(20px,5vw,64px);
-    --measure:68ch;
-  }
+*{box-sizing:border-box}
+body{
+  margin:0 auto; padding:56px 24px 80px; max-width:var(--width);
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",
+              "Noto Sans SC",Arial,sans-serif;
+  font-size:var(--size); line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--link); text-decoration:none; border-bottom:1px solid transparent}
+a:hover{border-bottom-color:var(--link)}
 
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    margin:0;
-    background:var(--substrate);
-    color:var(--paper);
-    font-family:"IBM Plex Sans",system-ui,sans-serif;
-    font-size:clamp(15px,1.05vw,17px);
-    line-height:1.65;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:inherit}
-  :focus-visible{outline:2px solid var(--warm);outline-offset:3px;border-radius:2px}
+h1{font-size:1.95em; margin:0 0 4px; font-weight:600; letter-spacing:-.01em}
+h2{font-size:1.12em; margin:44px 0 16px; font-weight:600;
+   padding-bottom:8px; border-bottom:1px solid var(--line)}
+h3{font-size:1em; margin:0 0 2px; font-weight:600}
+p{margin:0 0 14px}
 
-  /* ---------- signature: the colorbar rail ---------- */
-  .rail{
-    position:fixed;top:0;left:0;bottom:0;width:var(--rail);
-    display:flex;flex-direction:column;align-items:center;
-    padding:28px 0;z-index:40;
-    border-right:1px solid var(--trace);
-    background:var(--substrate);
-  }
-  .rail__cap{
-    font-family:"IBM Plex Mono",monospace;font-size:9.5px;
-    letter-spacing:.14em;color:var(--muted);
-  }
-  .rail__bar{
-    position:relative;flex:1;width:9px;margin:14px 0;border-radius:1px;
-    background:linear-gradient(to top,#101725 0%,var(--cool) 22%,#8E6FA0 46%,var(--warm) 72%,var(--hot) 90%,#FFE0B0 100%);
-  }
-  .rail__tick{
-    position:absolute;left:-7px;width:23px;height:1px;background:var(--paper);opacity:.28;
-  }
-  .rail__marker{
-    position:absolute;left:-13px;width:35px;height:2px;background:var(--paper);
-    box-shadow:0 0 0 1px rgba(13,16,22,.9);
-    transition:top .08s linear;
-  }
-  .rail__read{
-    font-family:"IBM Plex Mono",monospace;font-size:11px;
-    color:var(--paper);font-variant-numeric:tabular-nums;
-  }
-  .rail__read span{display:block;font-size:9.5px;color:var(--muted);letter-spacing:.1em}
+/* ── 顶部:照片 + 姓名 ── */
+.top{display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap}
+.top img{
+  width:132px; height:132px; object-fit:cover; border-radius:6px; flex-shrink:0;
+}
+.top .who{flex:1; min-width:260px}
+.zh{color:var(--muted); font-size:.95em; margin:0 0 10px}
+.affil{margin:0 0 12px}
+.affil span{color:var(--muted)}
 
-  /* ---------- layout ---------- */
-  .wrap{margin-left:var(--rail);padding:0 var(--gutter)}
-  .band{max-width:1080px;padding:clamp(64px,9vh,120px) 0;border-bottom:1px solid var(--trace)}
-  .band:last-of-type{border-bottom:0}
+/* ── 链接行 ── */
+.links{margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:8px 16px}
+.links li{font-size:.94em}
 
-  .eyebrow{
-    display:flex;align-items:baseline;gap:14px;
-    font-family:"IBM Plex Mono",monospace;font-size:11px;
-    letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
-    margin:0 0 30px;
-  }
-  .eyebrow b{color:var(--paper);font-weight:500;letter-spacing:.18em}
-  .eyebrow i{
-    font-style:normal;margin-left:auto;color:var(--warm);
-    font-variant-numeric:tabular-nums;letter-spacing:.06em;
-  }
+/* ── News ── */
+.news{margin:0; padding:0; list-style:none}
+.news li{display:flex; gap:16px; padding:7px 0; align-items:baseline}
+.news time{color:var(--muted); font-size:.88em; white-space:nowrap; min-width:76px;
+           font-variant-numeric:tabular-nums}
 
-  h1,h2,h3{font-family:Archivo,sans-serif;font-stretch:125%;margin:0;line-height:1.06}
-  h1{font-size:clamp(38px,7.2vw,86px);font-weight:700;letter-spacing:-.022em}
-  h2{font-size:clamp(24px,3.1vw,38px);font-weight:600;letter-spacing:-.014em}
-  h3{font-size:clamp(17px,1.5vw,21px);font-weight:600;font-stretch:110%;letter-spacing:-.005em}
+/* ── 论文列表 ── */
+.pubs{margin:0; padding:0; list-style:none}
+.pub{padding:16px 0; border-bottom:1px solid var(--line)}
+.pub:last-child{border-bottom:none}
+.pub .authors{color:var(--muted); font-size:.92em; margin:3px 0 6px}
+.pub .authors b{color:var(--text); font-weight:600}   /* 你自己的名字加粗 */
+.pub .venue{color:var(--muted); font-size:.92em}
+.tag{
+  display:inline-block; padding:1px 7px; margin-right:8px; border-radius:3px;
+  background:var(--tag-bg); color:var(--muted);
+  font-size:.78em; letter-spacing:.03em; vertical-align:1px;
+}
+.note{color:var(--muted); font-size:.85em; margin-top:10px}
 
-  .han{
-    font-family:"IBM Plex Sans","Noto Sans SC",sans-serif;
-    font-size:clamp(17px,1.7vw,22px);color:var(--muted);
-    letter-spacing:.34em;margin:16px 0 0;
-  }
-  .thesis{
-    font-size:clamp(19px,2.2vw,28px);line-height:1.38;font-weight:400;
-    max-width:30ch;margin:30px 0 0;
-  }
-  .thesis em{font-style:normal;color:var(--warm)}
-  .affil{
-    margin:26px 0 0;max-width:52ch;color:var(--muted);font-size:.95em;
-  }
-  .affil a{color:var(--paper);text-decoration:none;border-bottom:1px solid var(--trace);padding-bottom:1px}
-  .affil a:hover{border-bottom-color:var(--warm)}
+/* ── 教育经历 ── */
+.edu{margin:0; padding:0; list-style:none}
+.edu li{padding:12px 0; border-bottom:1px solid var(--line)}
+.edu li:last-child{border-bottom:none}
+.edu .when{color:var(--muted); font-size:.9em}
+.edu p{margin:4px 0 0; color:var(--muted); font-size:.94em}
 
-  /* ---------- hero thermal field ---------- */
-  .field{
-    position:relative;margin:52px 0 0;
-    border:1px solid var(--trace);background:#0A0D12;
-    aspect-ratio:64/22;max-height:340px;overflow:hidden;
-  }
-  .field canvas{display:block;width:100%;height:100%;image-rendering:auto}
-  .field svg{position:absolute;inset:0;width:100%;height:100%}
-  .field__cap{
-    position:absolute;left:10px;bottom:8px;
-    font-family:"IBM Plex Mono",monospace;font-size:10px;
-    letter-spacing:.08em;color:rgba(231,235,241,.72);
-    text-shadow:0 1px 4px rgba(0,0,0,.85);
-  }
+footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
+       color:var(--muted); font-size:.86em}
 
-  /* ---------- research cards ---------- */
-  .cards{display:grid;gap:1px;background:var(--trace);border:1px solid var(--trace)}
-  @media (min-width:900px){.cards{grid-template-columns:repeat(3,1fr)}}
-  .card{background:var(--die);padding:26px 24px 30px;display:flex;flex-direction:column;gap:12px}
-  .card__tag{
-    font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--cool);
-  }
-  .card p{margin:0;color:var(--muted);font-size:.94em}
-  .card__meta{
-    margin-top:auto;padding-top:14px;border-top:1px solid var(--trace);
-    font-family:"IBM Plex Mono",monospace;font-size:10.5px;
-    letter-spacing:.08em;color:var(--muted);
-  }
-
-  /* ---------- publication rows ---------- */
-  .rows{margin:0;padding:0;list-style:none}
-  .row{
-    display:grid;gap:6px 28px;padding:24px 0;border-top:1px solid var(--trace);
-  }
-  @media (min-width:820px){.row{grid-template-columns:130px 1fr 130px;align-items:baseline}}
-  .row:last-child{border-bottom:1px solid var(--trace)}
-  .row__venue{
-    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;
-    text-transform:uppercase;color:var(--warm);
-  }
-  .row__title{margin:0;font-weight:500;line-height:1.4}
-  .row__who{margin:4px 0 0;color:var(--muted);font-size:.88em}
-  .row__state{
-    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
-    color:var(--muted);text-transform:uppercase;
-  }
-  @media (min-width:820px){.row__state{text-align:right}}
-
-  /* ---------- background timeline ---------- */
-  .tl{margin:0;padding:0;list-style:none;max-width:var(--measure)}
-  .tl li{display:grid;gap:4px 26px;padding:20px 0;border-top:1px solid var(--trace)}
-  @media (min-width:700px){.tl li{grid-template-columns:96px 1fr}}
-  .tl b{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.06em;color:var(--muted);font-weight:400}
-  .tl p{margin:4px 0 0;color:var(--muted);font-size:.92em}
-
-  /* ---------- toolbox ---------- */
-  .tools{display:grid;gap:28px 44px;max-width:var(--measure)}
-  @media (min-width:700px){.tools{grid-template-columns:repeat(2,1fr)}}
-  .tools h3{margin-bottom:8px}
-  .tools p{margin:0;color:var(--muted);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.9;letter-spacing:.02em}
-
-  /* ---------- contact ---------- */
-  .links{display:flex;flex-wrap:wrap;gap:10px;margin:30px 0 0;padding:0;list-style:none}
-  .links a{
-    display:inline-block;padding:11px 18px;text-decoration:none;
-    border:1px solid var(--trace);background:var(--die);
-    font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.06em;
-  }
-  .links a:hover{border-color:var(--warm);color:var(--warm)}
-  .aside{margin:44px 0 0;color:var(--muted);font-size:.9em;max-width:46ch}
-  footer{
-    margin-left:var(--rail);padding:26px var(--gutter) 40px;
-    border-top:1px solid var(--trace);
-    font-family:"IBM Plex Mono",monospace;font-size:10.5px;
-    letter-spacing:.08em;color:var(--muted);
-  }
-
-  /* ---------- mobile: rail collapses to a top bar ---------- */
-  @media (max-width:719px){
-    .rail{
-      top:0;left:0;right:0;bottom:auto;width:auto;height:5px;
-      flex-direction:row;padding:0;border-right:0;border-bottom:1px solid var(--trace);
-    }
-    .rail__cap,.rail__read{display:none}
-    .rail__bar{
-      flex:1;width:auto;height:5px;margin:0;
-      background:linear-gradient(to right,#101725 0%,var(--cool) 22%,#8E6FA0 46%,var(--warm) 72%,var(--hot) 90%,#FFE0B0 100%);
-    }
-    .rail__tick{display:none}
-    .rail__marker{left:auto;top:0!important;width:2px;height:5px;transform:none}
-    .wrap,footer{margin-left:0}
-    .wrap{padding-top:5px}
-    .han{letter-spacing:.22em}
-  }
-
-  @media (prefers-reduced-motion:reduce){
-    html{scroll-behavior:auto}
-    .rail__marker{transition:none}
-  }
+/* ── 手机适配:不用管,自动生效 ── */
+@media (max-width:560px){
+  body{padding:32px 18px 56px}
+  .top{gap:18px}
+  .top img{width:96px; height:96px}
+  .news li{flex-direction:column; gap:0}
+  .news time{min-width:0}
+}
 </style>
 </head>
 <body>
 
-<!-- signature element: the colorbar from a thermal map, doubling as scroll position -->
-<div class="rail" aria-hidden="true">
-  <div class="rail__cap">MAX</div>
-  <div class="rail__bar" id="bar">
-    <div class="rail__marker" id="marker" style="top:0"></div>
-  </div>
-  <div class="rail__read"><span>READ</span><b id="read">42.0&#8201;&deg;C</b></div>
-</div>
+<!-- ═══════════════════ 顶部区块 ═══════════════════ -->
+<header class="top">
 
-<main class="wrap">
+  <!-- 【改这里】照片:把图片文件传到仓库,文件名写在 src 里。
+       暂时没照片就把整个 <img> 这一行删掉,布局会自动调整。 -->
+  <img src="photo.jpg" alt="Cong (Robin) Shen">
 
-  <!-- ================= HERO ================= -->
-  <section class="band" id="top" data-label="Overview">
-    <p class="eyebrow"><b>MEC Research Group</b> &middot; UMN ECE <i data-temp></i></p>
+  <div class="who">
+    <!-- 【改这里】姓名 -->
+    <h1>Cong (Robin) Shen</h1>
+    <p class="zh">沈聪</p>
 
-    <h1>Cong&nbsp;(Robin)<br>Shen</h1>
-    <p class="han">沈聪</p>
-
-    <p class="thesis">I build generative models that predict <em>where a 3D-stacked chip gets hot</em> — without running the full simulation.</p>
-
+    <!-- 【改这里】身份和单位 -->
     <p class="affil">
-      First-year PhD student in Electrical &amp; Computer Engineering at the
-      <a href="https://cse.umn.edu/ece">University of Minnesota, Twin Cities</a>,
-      advised by Prof. Yu&nbsp;(Kevin)&nbsp;Cao in the Microelectronics Co-design (MEC) group.
-      Previously device reliability and compact modeling at Peking University, where I started
-      replacing expensive semiconductor simulation with learned models.
+      PhD Student, Electrical &amp; Computer Engineering<br>
+      <span>University of Minnesota, Twin Cities</span><br>
+      <span>Advised by Prof. Yu (Kevin) Cao, MEC Group</span>
     </p>
 
-    <figure class="field">
-      <canvas id="thermal" width="128" height="44" aria-label="Animated simulation of a chip temperature field"></canvas>
-      <svg viewBox="0 0 128 44" preserveAspectRatio="none" aria-hidden="true">
-        <g fill="none" stroke="rgba(231,235,241,.30)" stroke-width=".4">
-          <rect x="8" y="7" width="26" height="14"/>
-          <rect x="38" y="7" width="18" height="9"/>
-          <rect x="60" y="5" width="30" height="18"/>
-          <rect x="95" y="9" width="24" height="12"/>
-          <rect x="10" y="26" width="20" height="11"/>
-          <rect x="34" y="21" width="24" height="16"/>
-          <rect x="63" y="27" width="17" height="10"/>
-          <rect x="85" y="26" width="33" height="11"/>
-        </g>
-      </svg>
-      <figcaption class="field__cap">FLOORPLAN &middot; TRANSIENT TEMPERATURE FIELD &middot; ILLUSTRATIVE</figcaption>
-    </figure>
-  </section>
-
-  <!-- ================= RESEARCH ================= -->
-  <section class="band" id="research" data-label="Research">
-    <p class="eyebrow"><b>Research</b> <i data-temp></i></p>
-    <h2>Thermal simulation is the bottleneck.<br>I'm replacing it with learned models.</h2>
-    <p class="affil" style="max-width:62ch">
-      Chiplet stacks trap heat between dies, and the finite-element solvers that predict it take
-      hours per design point. That cost sits directly in the inner loop of floorplanning,
-      power delivery, and runtime thermal management. My work asks how much of that solver you
-      can learn — and how far you can get from the sparse, noisy signals a real chip actually reports.
-    </p>
-
-    <div class="cards" style="margin-top:44px">
-      <article class="card">
-        <p class="card__tag">Diffusion models</p>
-        <h3>Full-chip maps from sparse sensors</h3>
-        <p>A cascaded conditional diffusion framework that reconstructs full-resolution temperature
-           and power maps from a handful of on-die sensors and performance counters, with calibrated
-           uncertainty on every pixel.</p>
-        <p class="card__meta">SiliDiff &middot; under review</p>
-      </article>
-
-      <article class="card">
-        <p class="card__tag">Graph neural networks</p>
-        <h3>Surrogates for 3D-IC stacks</h3>
-        <p>Treating a chiplet stack as a graph of thermal nodes so a single trained model transfers
-           across floorplans and stack configurations, instead of being refit per design.</p>
-        <p class="card__meta">Ongoing</p>
-      </article>
-
-      <article class="card">
-        <p class="card__tag">Where this started</p>
-        <h3>Learned compact models for device reliability</h3>
-        <p>Neural networks that extract hot-carrier degradation model parameters in seconds instead
-           of hours, plus self-heating and electrothermal work on backside power delivery. Same
-           idea as the thermal work, one length scale down.</p>
-        <p class="card__meta">IEEE T-ED &middot; JEDS &middot; IEDM &middot; EDTM</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- ================= WORK ================= -->
-  <section class="band" id="work" data-label="Selected work">
-    <p class="eyebrow"><b>Selected work</b> <i data-temp></i></p>
-    <ul class="rows">
-      <li class="row">
-        <span class="row__venue">ASP-DAC 2027</span>
-        <div>
-          <p class="row__title">SiliDiff: cascaded conditional diffusion for full-chip temperature and power map reconstruction</p>
-          <p class="row__who">C. Shen, N. K. Cherukuri, S. S. Sapatnekar, Y. Cao</p>
-        </div>
-        <span class="row__state">Submitted</span>
-      </li>
-      <li class="row">
-        <span class="row__venue">Nature 2024</span>
-        <div>
-          <p class="row__title">A hot-emitter transistor based on stimulated emission of heated carriers</p>
-          <p class="row__who">C. Liu<sup>&dagger;</sup>, X. Z. Wang<sup>&dagger;</sup>, <b style="font-weight:600">C. Shen<sup>&dagger;</sup></b>, L. P. Ma, X. Q. Yang, Y. Kong, W. Ma, Y. Liang, et al. &middot; <i style="font-style:normal;color:var(--warm)">Nature</i> 632(8026), 782&ndash;787 &middot; <span style="color:var(--muted)">&dagger; equal contribution</span></p>
-        </div>
-        <span class="row__state">Co-first author</span>
-      </li>
-      <li class="row">
-        <span class="row__venue">IEEE T-ED 2025</span>
-        <div>
-          <p class="row__title">Dynamic modeling of parametric shifts in FinFETs under hot carrier degradation</p>
-          <p class="row__who"><b style="font-weight:600">C. Shen</b>, Y. Li, B. Peng, Z. Wang, Y. Xue, Y. Zhao, P. Ren, L. Zhang, R. Wang &middot; IEEE T-ED 73(1), 63&ndash;70</p>
-        </div>
-        <span class="row__state">First author</span>
-      </li>
-      <li class="row">
-        <span class="row__venue">IEEE JEDS 2024</span>
-        <div>
-          <p class="row__title">A neural network approach for parameterization of hot carrier degradation models</p>
-          <p class="row__who"><b style="font-weight:600">C. Shen</b>, Y. Li, Z. Wang, L. Zhang, R. Wang, R. Huang &middot; IEEE JEDS 13, 756&ndash;761</p>
-        </div>
-        <span class="row__state">First author</span>
-      </li>
-      <li class="row">
-        <span class="row__venue">IEDM 2023</span>
-        <div>
-          <p class="row__title">New insights into interface trap generation during hot carrier degradation: full-band electronic resonance, (100) vs (110), nMOS vs pMOS</p>
-          <p class="row__who">Z. Wang, H. Lu, Z. Sun, <b style="font-weight:600">C. Shen</b>, B. Peng, W. F. Li, Y. Xue, D. Wang, Z. Ji</p>
-        </div>
-        <span class="row__state">Published</span>
-      </li>
-      <li class="row">
-        <span class="row__venue">IEEE JEDS 2025</span>
-        <div>
-          <p class="row__title">Cross-layer modeling and simulation for electrothermal reliability with backside power delivery networks</p>
-          <p class="row__who">Y. Li, <b style="font-weight:600">C. Shen</b>, S. Chen, Z. Sun, Z. Wang, R. Wang, L. Zhang</p>
-        </div>
-        <span class="row__state">Published</span>
-      </li>
-    </ul>
-    <p class="aside">Eleven papers to date. The full list, with citation counts, lives on
-      <a href="#" style="color:var(--paper)">Google Scholar</a>. <!-- TODO: paste your Scholar URL --></p>
-  </section>
-
-  <!-- ================= BACKGROUND ================= -->
-  <section class="band" id="background" data-label="Background">
-    <p class="eyebrow"><b>Background</b> <i data-temp></i></p>
-    <h2>From standard-cell layout<br>to learned physics.</h2>
-    <ul class="tl" style="margin-top:40px">
-      <li>
-        <b>2025 &rarr;</b>
-        <div>
-          <h3>PhD, Electrical &amp; Computer Engineering</h3>
-          <p>University of Minnesota, Twin Cities. Graduate research assistant, MEC group.
-             Advisor: Prof. Yu (Kevin) Cao.</p>
-        </div>
-      </li>
-      <li>
-        <b>2022 &ndash; 2025</b>
-        <div>
-          <h3>MEng, Peking University (Shenzhen)</h3>
-          <p>Device reliability and compact modeling in the group of R. Huang and R. Wang. First
-             author on neural-network methods for hot-carrier degradation model extraction; co-author
-             on an IEDM study of interface trap generation and on a <i>Nature</i> paper on hot-emitter
-             transistors. Also built an AES-128 encryption processor — a streaming key schedule cut
-             area roughly 75% while holding 800&nbsp;MHz.</p>
-        </div>
-      </li>
-      <li>
-        <b>2018 &ndash; 2022</b>
-        <div>
-          <h3>BEng in Microelectronics, Lanzhou University</h3>
-          <p>Where the transistors came first.</p>
-        </div>
-      </li>
-    </ul>
-  </section>
-
-  <!-- ================= TOOLBOX ================= -->
-  <section class="band" id="tools" data-label="Toolbox">
-    <p class="eyebrow"><b>Toolbox</b> <i data-temp></i></p>
-    <div class="tools" style="margin-top:34px">
-      <div>
-        <h3>Modeling</h3>
-        <p>PyTorch &middot; diffusion models &middot; GNNs<br>COMSOL &middot; Cadence Celsius</p>
-      </div>
-      <div>
-        <h3>Silicon</h3>
-        <p>Synopsys DC / ICC&nbsp;II / PrimeTime / Formality<br>HSPICE &middot; Cadence Virtuoso</p>
-      </div>
-      <div>
-        <h3>Languages</h3>
-        <p>Python &middot; Verilog &middot; TCL &middot; C++</p>
-      </div>
-      <div>
-        <h3>Spoken</h3>
-        <p>Mandarin (native) &middot; English</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= CONTACT ================= -->
-  <section class="band" id="contact" data-label="Contact">
-    <p class="eyebrow"><b>Contact</b> <i data-temp></i></p>
-    <h2>Happy to talk about heat,<br>chiplets, or generative models.</h2>
-    <p class="affil">
-      I'm always up for reading a draft, comparing notes on thermal benchmarks, or hearing about
-      internship work in EDA and hardware modeling. Email is the fastest way to reach me.
-    </p>
+    <!-- 【改这里】链接。把 # 换成真实网址;不需要的整行删掉 -->
     <ul class="links">
-      <li><a href="mailto:shen0706@umn.edu">shen0706@umn.edu</a></li><!-- TODO: verify -->
-      <li><a href="#">Google Scholar</a></li><!-- TODO -->
-      <li><a href="#">LinkedIn</a></li><!-- TODO -->
+      <li><a href="mailto:shen0706@umn.edu">Email</a></li>
+      <li><a href="#">Google Scholar</a></li>
+      <li><a href="#">LinkedIn</a></li>
       <li><a href="https://github.com/Robincshen">GitHub</a></li>
-      <li><a href="#">CV (PDF)</a></li><!-- TODO -->
+      <li><a href="#">CV</a></li>
     </ul>
-    <p class="aside">Off the clock: snowboarding at whatever hill Minnesota can offer, and a slowly improving golf swing.</p>
-  </section>
-</main>
+  </div>
+</header>
 
-<footer>© 2026 Cong Shen &middot; Minneapolis, MN</footer>
 
-<script>
-(function(){
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+<!-- ═══════════════════ 简介 ═══════════════════ -->
+<h2>About</h2>
 
-  /* ---------- hero: transient heat diffusion on a coarse grid ---------- */
-  var cv = document.getElementById('thermal');
-  var ctx = cv.getContext('2d');
-  var W = cv.width, H = cv.height, N = W*H;
-  var T = new Float32Array(N), Tn = new Float32Array(N), P = new Float32Array(N);
+<!-- 【改这里】自我介绍。想写几段就写几段,每段一个 <p>...</p> -->
+<p>
+  I work on generative AI for chip thermal and power simulation, and on using it to
+  drive more efficient thermal management. Thermal analysis of 3D-stacked chiplets
+  currently relies on solvers that take hours per design point, which puts it out of
+  reach of the design loop it needs to inform. My research replaces parts of that
+  computation with learned models.
+</p>
+<p>
+  Before joining Minnesota I worked on device reliability and compact modeling at
+  Peking University. I have 11 publications to date, 4 as first or co-first author,
+  including a co-first-authored paper in <i>Nature</i>.
+</p>
 
-  // power blocks roughly matching the floorplan overlay
-  var blocks = [
-    [8,7,26,14,.55],[38,7,18,9,.95],[60,5,30,18,.42],[95,9,24,12,.80],
-    [10,26,20,11,.70],[34,21,24,16,.30],[63,27,17,10,1.00],[85,26,33,11,.50]
-  ];
-  var phase = blocks.map(function(_,i){return i*1.9;});
 
-  function idx(x,y){return y*W+x;}
+<!-- ═══════════════════ News(可选,整块可删) ═══════════════════ -->
+<h2>News</h2>
 
-  function step(t){
-    // update power density per block with a slow duty-cycle wobble
-    P.fill(0.02);
-    for(var b=0;b<blocks.length;b++){
-      var B=blocks[b];
-      var duty = 0.55 + 0.45*Math.sin(t*0.55 + phase[b]);
-      var q = B[4]*duty;
-      for(var y=B[1];y<B[1]+B[3];y++)
-        for(var x=B[0];x<B[0]+B[2];x++) P[idx(x,y)] += q;
-    }
-    // explicit heat equation step with Newtonian cooling to ambient
-    var a=0.19, cool=0.016;
-    for(var y2=0;y2<H;y2++){
-      for(var x2=0;x2<W;x2++){
-        var i=idx(x2,y2), c=T[i];
-        var l=T[idx(x2>0?x2-1:0,y2)], r=T[idx(x2<W-1?x2+1:W-1,y2)];
-        var u=T[idx(x2,y2>0?y2-1:0)], d=T[idx(x2,y2<H-1?y2+1:H-1)];
-        Tn[i]=c + a*(l+r+u+d-4*c) + P[i]*0.05 - cool*c;
-      }
-    }
-    T.set(Tn);
-  }
+<!-- 【改这里】最新动态。加一条就复制一个 <li>...</li> -->
+<ul class="news">
+  <li><time>2026-07</time><span>Attended DAC 2026 in Long Beach, CA.</span></li>
+  <li><time>2026-06</time><span>Presented our RTN compact modeling work at ICMC.</span></li>
+  <li><time>2026-03</time><span>Attended IRPS 2026 in Tucson, AZ.</span></li>
+  <li><time>2025-09</time><span>Started my PhD at the University of Minnesota.</span></li>
+</ul>
 
-  // thermal colormap: substrate -> blue -> violet -> amber -> red -> white
-  var stops=[[12,17,28],[62,116,171],[142,111,160],[232,145,58],[242,84,91],[255,232,196]];
-  function ramp(v){
-    v = v<0?0:(v>1?1:v);
-    var s=v*(stops.length-1), i=Math.floor(s), f=s-i;
-    if(i>=stops.length-1) return stops[stops.length-1];
-    var A=stops[i], B=stops[i+1];
-    return [A[0]+(B[0]-A[0])*f, A[1]+(B[1]-A[1])*f, A[2]+(B[2]-A[2])*f];
-  }
 
-  var img = ctx.createImageData(W,H);
-  function draw(){
-    var d=img.data;
-    for(var i=0;i<N;i++){
-      var c=ramp(T[i]*0.30);
-      d[i*4]=c[0]; d[i*4+1]=c[1]; d[i*4+2]=c[2]; d[i*4+3]=255;
-    }
-    ctx.putImageData(img,0,0);
-  }
+<!-- ═══════════════════ 研究方向 ═══════════════════ -->
+<h2>Research</h2>
 
-  var t0=0;
-  // let the field reach a plausible steady state before the first paint
-  for(var w=0;w<220;w++){ step(t0); t0+=0.05; }
-  draw();
+<!-- 【改这里】研究方向。每个方向一个 <h3> + <p> -->
+<h3>Generative models for full-chip thermal and power maps</h3>
+<p>
+  Reconstructing full-resolution temperature and power maps from a small number of
+  on-die sensors and performance counters, with calibrated uncertainty, so that
+  thermal information is available at runtime rather than after an offline solve.
+</p>
 
-  if(!reduce){
-    var last=0;
-    (function loop(ts){
-      if(ts-last>55){ step(t0); t0+=0.055; draw(); last=ts; }
-      requestAnimationFrame(loop);
-    })(0);
-  }
+<h3>Learned surrogates for 3D-IC and chiplet stacks</h3>
+<p>
+  Graph-based models that transfer across floorplans and stack configurations instead
+  of being refit for every new design.
+</p>
 
-  /* ---------- rail: scroll position as a temperature reading ---------- */
-  var marker=document.getElementById('marker');
-  var read=document.getElementById('read');
-  var bar=document.getElementById('bar');
-  var TMIN=42.0, TMAX=98.6;
-  var sections=[].slice.call(document.querySelectorAll('.band'));
-  var mobile=function(){return window.innerWidth<720;};
+<h3>Device reliability and compact modeling</h3>
+<p>
+  Earlier work on neural-network methods for extracting hot-carrier degradation model
+  parameters, along with self-heating and electrothermal simulation for advanced nodes.
+</p>
 
-  function fracOf(el){
-    var doc=document.documentElement;
-    var span=doc.scrollHeight-window.innerHeight;
-    if(span<=0) return 0;
-    var y=el.getBoundingClientRect().top+window.scrollY-window.innerHeight*0.32;
-    return Math.max(0,Math.min(1,y/span));
-  }
 
-  // each section's eyebrow shows the reading at the point it scrolls into view,
-  // so the number in the header and the number on the rail are the same scale
-  function labelSections(){
-    sections.forEach(function(s){
-      var slot=s.querySelector('[data-temp]');
-      if(!slot) return;
-      var temp=TMIN+(TMAX-TMIN)*fracOf(s);
-      slot.textContent=temp.toFixed(1)+'\u2009\u00B0C';
-      s.dataset.frac=fracOf(s);
-    });
-    // ticks on the rail at each section boundary
-    [].slice.call(bar.querySelectorAll('.rail__tick')).forEach(function(n){n.remove();});
-    if(mobile()) return;
-    sections.forEach(function(s){
-      var tick=document.createElement('div');
-      tick.className='rail__tick';
-      tick.style.top=(100-fracOf(s)*100)+'%';
-      bar.appendChild(tick);
-    });
-  }
+<!-- ═══════════════════ 论文列表 ═══════════════════ -->
+<h2>Publications</h2>
 
-  function onScroll(){
-    var doc=document.documentElement;
-    var span=doc.scrollHeight-window.innerHeight;
-    var f=span>0?Math.max(0,Math.min(1,window.scrollY/span)):0;
-    if(mobile()){
-      marker.style.left=(f*100)+'%';
-      marker.style.top='0';
-    }else{
-      marker.style.top=(100-f*100)+'%';
-      marker.style.left='';
-    }
-    read.textContent=(TMIN+(TMAX-TMIN)*f).toFixed(1)+'\u2009\u00B0C';
-  }
+<!-- 【改这里】论文。加一篇就复制一整个 <li class="pub">...</li>
+     自己的名字用 <b>C. Shen</b> 包起来会自动加粗。
+     标题想加链接就写成 <a href="网址">标题</a> -->
+<ul class="pubs">
 
-  labelSections();
-  onScroll();
-  window.addEventListener('scroll',onScroll,{passive:true});
-  window.addEventListener('resize',function(){labelSections();onScroll();});
-})();
-</script>
+  <li class="pub">
+    <span class="tag">Nature 2024</span>
+    <h3>A hot-emitter transistor based on stimulated emission of heated carriers</h3>
+    <p class="authors">
+      C. Liu<sup>&dagger;</sup>, X. Z. Wang<sup>&dagger;</sup>, <b>C. Shen<sup>&dagger;</sup></b>,
+      L. P. Ma, X. Q. Yang, Y. Kong, W. Ma, Y. Liang, et al.
+    </p>
+    <p class="venue"><i>Nature</i> 632(8026), 782&ndash;787 &nbsp;·&nbsp; <sup>&dagger;</sup> equal contribution</p>
+  </li>
+
+  <li class="pub">
+    <span class="tag">IEEE T-ED 2025</span>
+    <h3>Dynamic modeling of parametric shifts in FinFETs under hot carrier degradation</h3>
+    <p class="authors">
+      <b>C. Shen</b>, Y. Li, B. Peng, Z. Wang, Y. Xue, Y. Zhao, P. Ren, L. Zhang, R. Wang
+    </p>
+    <p class="venue">IEEE Transactions on Electron Devices 73(1), 63&ndash;70</p>
+  </li>
+
+  <li class="pub">
+    <span class="tag">IEEE JEDS 2024</span>
+    <h3>A neural network approach for parameterization of hot carrier degradation models</h3>
+    <p class="authors"><b>C. Shen</b>, Y. Li, Z. Wang, L. Zhang, R. Wang, R. Huang</p>
+    <p class="venue">IEEE Journal of the Electron Devices Society 13, 756&ndash;761</p>
+  </li>
+
+  <li class="pub">
+    <span class="tag">EDTM 2024</span>
+    <h3>A neural network based fast parameter extraction of compact hot carrier degradation model in FinFETs</h3>
+    <p class="authors">
+      <b>C. Shen</b>, Y. Li, W. Dai, X. Zhang, Z. Wang, Z. Ji, L. Zhang, R. Wang, R. Huang
+    </p>
+    <p class="venue">IEEE Electron Devices Technology &amp; Manufacturing Conference, 1&ndash;3</p>
+  </li>
+
+  <li class="pub">
+    <span class="tag">IEDM 2023</span>
+    <h3>New insights into the interface trap generation during hot carrier degradation</h3>
+    <p class="authors">Z. Wang, H. Lu, Z. Sun, <b>C. Shen</b>, B. Peng, W. F. Li, Y. Xue, D. Wang, Z. Ji</p>
+    <p class="venue">IEEE International Electron Devices Meeting, 1&ndash;4</p>
+  </li>
+
+  <li class="pub">
+    <span class="tag">IEEE JEDS 2025</span>
+    <h3>Cross-layer modeling and simulation for electrothermal reliability with backside power delivery networks</h3>
+    <p class="authors">Y. Li, <b>C. Shen</b>, S. Chen, Z. Sun, Z. Wang, R. Wang, L. Zhang</p>
+    <p class="venue">IEEE Journal of the Electron Devices Society</p>
+  </li>
+
+</ul>
+
+<!-- 【改这里】把 # 换成你的 Google Scholar 网址 -->
+<p class="note">Full publication list on <a href="#">Google Scholar</a>.</p>
+
+
+<!-- ═══════════════════ 教育经历 ═══════════════════ -->
+<h2>Education</h2>
+
+<ul class="edu">
+  <li>
+    <h3>PhD, Electrical &amp; Computer Engineering</h3>
+    <span class="when">University of Minnesota, Twin Cities &nbsp;·&nbsp; 2025 &ndash; present</span>
+  </li>
+  <li>
+    <h3>MEng, Electrical &amp; Computer Engineering</h3>
+    <span class="when">Peking University &nbsp;·&nbsp; 2022 &ndash; 2025</span>
+    <p>Device reliability and compact modeling.</p>
+  </li>
+  <li>
+    <h3>BEng, Microelectronics</h3>
+    <span class="when">Lanzhou University &nbsp;·&nbsp; 2018 &ndash; 2022</span>
+  </li>
+</ul>
+
+
+<!-- ═══════════════════ 页脚 ═══════════════════ -->
+<footer>
+  <!-- 【改这里】页脚 -->
+  Cong (Robin) Shen &nbsp;·&nbsp; Minneapolis, MN &nbsp;·&nbsp;
+  <a href="mailto:shen0706@umn.edu">shen0706@umn.edu</a>
+</footer>
+
 </body>
 </html>
