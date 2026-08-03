@@ -55,7 +55,14 @@ p{margin:0 0 14px}
 /* ── 顶部:照片 + 姓名 ── */
 .top{display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap}
 .top img{
-  width:132px; height:132px; object-fit:cover; border-radius:6px; flex-shrink:0;
+  width: var(--photo);
+  height: var(--photo);          /* 和宽度相同 = 正方形 */
+  aspect-ratio: 1 / 1;           /* 双重保险,防止被拉伸 */
+  object-fit: cover;             /* 裁切填满,不变形 */
+  object-position: 50% 35%;      /* 裁切重心。第二个数字越小越偏上 */
+  border-radius: 6px;            /* 想要圆形就改成 50% */
+  flex-shrink: 0;
+  display: block;
 }
 .top .who{flex:1; min-width:260px}
 .zh{color:var(--muted); font-size:.95em; margin:0 0 10px}
