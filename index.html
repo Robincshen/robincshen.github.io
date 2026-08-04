@@ -80,7 +80,7 @@
   --tag-bg: #f3f4f6;
   --width:  830px;
   --size:   16.5px;
-  --photo:  150px;        /* 照片尺寸,只改这一个数字 */
+  --photo:  178px;        /* 照片尺寸,只改这一个数字 */
 }
 
 *{box-sizing:border-box}
@@ -95,7 +95,8 @@ body{
 a{color:var(--link); text-decoration:none; border-bottom:1px solid transparent}
 a:hover{border-bottom-color:var(--link)}
 
-h1{font-size:1.95em; margin:0 0 10px; font-weight:600; letter-spacing:-.01em}
+h1{font-size:1.95em; margin:0 0 12px; font-weight:600; letter-spacing:-.01em;
+   line-height:1.15}
 h1 .zh{
   font-size:.52em; font-weight:400; color:var(--muted);
   letter-spacing:.18em; margin-left:14px; white-space:nowrap;
@@ -113,6 +114,7 @@ p{margin:0 0 14px}
   width:var(--photo); height:var(--photo);
   aspect-ratio:1/1; object-fit:cover; object-position:50% 50%;
   border-radius:6px; flex-shrink:0; display:block;
+  margin-top:5px;          /* 光学对齐:和名字字母顶部齐平 */
 }
 .top .who{flex:1; min-width:280px}
 .affil{margin:0 0 14px}
