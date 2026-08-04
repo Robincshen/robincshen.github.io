@@ -78,6 +78,8 @@
   --line:   #e5e7eb;
   --bg:     #ffffff;
   --tag-bg: #f3f4f6;
+  --head:   #7a0019;      /* 板块标题颜色 */
+  --rule:   #e3ccd2;      /* 标题下方分隔线,建议用 --head 的浅色调 */
   --width:  830px;
   --size:   16.5px;
   --photo:  178px;        /* 照片尺寸,只改这一个数字 */
@@ -101,11 +103,18 @@ h1 .zh{
   font-size:.52em; font-weight:400; color:var(--muted);
   letter-spacing:.18em; margin-left:14px; white-space:nowrap;
 }
-h2{font-size:1.12em; margin:46px 0 18px; font-weight:600;
-   padding-bottom:8px; border-bottom:1px solid var(--line)}
+h2{
+  font-size:1.44em; margin:66px 0 22px; font-weight:600;
+  color:var(--head); letter-spacing:-.012em; line-height:1.2;
+  padding-bottom:11px; border-bottom:2px solid var(--rule);
+}
+h2:first-of-type{margin-top:54px}
 h3{font-size:1em; margin:0 0 2px; font-weight:600}
-h4{font-size:.88em; margin:26px 0 10px; font-weight:600; color:var(--muted);
-   text-transform:uppercase; letter-spacing:.07em}
+h4{
+  font-size:.82em; margin:30px 0 8px; font-weight:600;
+  color:var(--head); opacity:.62;
+  text-transform:uppercase; letter-spacing:.1em;
+}
 p{margin:0 0 14px}
 
 /* 顶部 */
@@ -174,6 +183,7 @@ footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
 
 @media (max-width:600px){
   body{padding:32px 18px 56px}
+  h2{font-size:1.3em; margin:50px 0 18px}
   h1 .zh{display:block; margin:6px 0 0; font-size:.45em; letter-spacing:.12em}
   .top{gap:20px}
   .news li{flex-direction:column; gap:0}
