@@ -122,7 +122,13 @@ a{
 }
 a:hover{border-bottom-color:var(--maroon)}
 
-p{margin:0 0 14px}
+p{margin:0 0 14px; text-wrap:pretty}
+
+/* About 的段落两端对齐 —— 只作用于紧跟 h2 的段落,不影响论文/教育里的短行 */
+h2 + p, h2 + p + p{
+  text-align:justify;
+  hyphens:auto; -webkit-hyphens:auto;   /* 不想断词就删掉这一行 */
+}
 
 /* ── 标题体系 ───────────────────────────────────────────── */
 h1{
@@ -322,8 +328,8 @@ footer{
   thermal information that only arrives after an offline solve.
 </p>
 <p>
-  Before joining Minnesota I worked on algorithm-based device reliability and compact
-  modeling at Peking University. I have 11 publications to date, 4 as first or co-first
+  Before joining Minnesota I&nbsp;worked on algorithm-based device reliability and compact
+  modeling at Peking University. I&nbsp;have 11 publications to date, 4 as first or co-first
   author, in journals and conferences including <i>Nature</i> and IEEE T-ED.
 </p>
 
@@ -350,7 +356,7 @@ footer{
     <div class="body">
       <p class="authors">
         Chi Liu<sup>&lowast;#</sup>, Xin-Zhe Wang<sup>#</sup>, <b>Cong Shen<sup>#</sup></b>,
-        Lai-Peng Ma<sup>#</sup>, Xu-Qi Yang, Yue Kong, Wei Ma, Yan Liang, et al.
+        Lai-Peng Ma, Xu-Qi Yang, Yue Kong, Wei Ma, Yan Liang, et al.
       </p>
       <p class="title">A hot-emitter transistor based on stimulated emission of heated carriers</p>
       <p class="venue">
