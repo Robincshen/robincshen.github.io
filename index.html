@@ -70,130 +70,218 @@
 }
 </script>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
 :root{
-  --text:   #1a1a1a;
-  --muted:  #6b7280;
-  --link:   #7a0019;      /* 主色 */
-  --line:   #e5e7eb;
+  /* ── 配色:冷纸灰底 + 明大栗色。改这几行即可换主题 ── */
+  --page:   #eceef0;      /* 页面底色 */
   --bg:     #ffffff;      /* 内容白卡 */
-  --page:   #f1efec;      /* 页面底色 — 想换就改这一行,备选见文件底部注释 */
-  --tag-bg: #f3f4f6;
-  --head:   #7a0019;      /* 板块标题颜色 */
-  --rule:   #e3ccd2;      /* 标题下方分隔线,建议用 --head 的浅色调 */
-  --width:  1030px;
+  --ink:    #17171a;      /* 正文 */
+  --ink2:   #6c7076;      /* 次要文字 */
+  --ink3:   #9ca1a7;      /* 三级文字 */
+  --rule:   #e3e5e8;      /* 细分隔线 */
+  --maroon: #7a0019;      /* 主色 */
+  --wash:   #f7eff1;      /* 主色淡底 */
+  --tagbg:  #f2f3f5;      /* venue 标签底色 */
+
+  --width:  1030px;     /* 白卡宽度 — 想更宽/更窄只改这个数字 */
   --size:   16.5px;
-  --photo:  178px;        /* 照片尺寸,只改这一个数字 */
+  --photo:  178px;        /* 照片尺寸 */
+
+  --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* 姓名用系统字体(改版前的样子);想跟正文统一就改成 var(--sans) */
+  --name: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC",
+          "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
 }
 
 *{box-sizing:border-box}
-html{background:var(--page)}
+html{background:var(--page); -webkit-text-size-adjust:100%}
+
 body{
-  margin:44px auto; padding:56px 60px 68px; max-width:var(--width);
-  background:var(--bg); color:var(--text);
-  border:1px solid #e2ded8;
-  box-shadow:0 1px 3px rgba(40,30,20,.05), 0 8px 24px rgba(40,30,20,.04);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",
-              "Noto Sans SC","Microsoft YaHei",Arial,sans-serif;
-  font-size:var(--size); line-height:1.7;
+  margin:48px auto; padding:62px 76px 74px; max-width:var(--width);
+  background:var(--bg); color:var(--ink);
+  border:1px solid #dfe2e5;
+  box-shadow:0 1px 2px rgba(20,24,28,.05), 0 10px 30px rgba(20,24,28,.05);
+  font-family:var(--sans); font-size:var(--size); line-height:1.68;
+  font-feature-settings:"kern" 1;
   -webkit-font-smoothing:antialiased;
 }
-a{color:var(--link); text-decoration:none; border-bottom:1px solid transparent}
-a:hover{border-bottom-color:var(--link)}
 
-h1{font-size:1.95em; margin:0 0 12px; font-weight:600; letter-spacing:-.01em;
-   line-height:1.15}
-h1 .zh{
-  font-size:.52em; font-weight:400; color:var(--muted);
-  letter-spacing:.18em; margin-left:14px; white-space:nowrap;
+::selection{background:var(--wash); color:var(--maroon)}
+:focus-visible{outline:2px solid var(--maroon); outline-offset:3px; border-radius:2px}
+
+a{
+  color:var(--maroon); text-decoration:none;
+  border-bottom:1px solid #e6cdd3;      /* 常态就有淡下划线,链接可发现 */
+  transition:border-color .12s ease;
 }
-h2{
-  font-size:1.44em; margin:66px 0 22px; font-weight:600;
-  color:var(--head); letter-spacing:-.012em; line-height:1.2;
-  padding-bottom:11px; border-bottom:2px solid var(--rule);
-}
-h2:first-of-type{margin-top:54px}
-h3{font-size:1em; margin:0 0 2px; font-weight:600}
-h4{
-  font-size:.82em; margin:30px 0 8px; font-weight:600;
-  color:var(--head); opacity:.62;
-  text-transform:uppercase; letter-spacing:.1em;
-}
+a:hover{border-bottom-color:var(--maroon)}
+
 p{margin:0 0 14px}
 
-/* 顶部 */
-.top{display:flex; gap:30px; align-items:flex-start; flex-wrap:wrap}
+/* ── 标题体系 ───────────────────────────────────────────── */
+h1{
+  font-family:var(--name);
+  font-size:clamp(1.9em, 4.2vw, 2.35em); font-weight:600;
+  letter-spacing:-.014em; line-height:1.12; margin:0 0 14px;
+}
+h1 .zh{
+  font-size:.4em; font-weight:400; color:var(--ink3);
+  letter-spacing:.2em; margin-left:16px; white-space:nowrap;
+  vertical-align:.22em;
+}
+
+h2{
+  position:relative;
+  font-size:1.34em; font-weight:600; letter-spacing:-.012em; line-height:1.25;
+  color:var(--maroon); margin:62px 0 24px; padding-bottom:12px;
+  border-bottom:1px solid var(--rule);
+}
+h2:first-of-type{margin-top:52px}
+h2::after{                                /* 签名细节:两段式分隔线 */
+  content:""; position:absolute; left:0; bottom:-1px;
+  width:48px; height:2px; background:var(--maroon);
+}
+
+h3{font-size:1em; font-weight:600; margin:0 0 3px; letter-spacing:-.004em}
+
+h4{                                        /* Journal / Conference */
+  font-family:var(--mono); font-size:.715em; font-weight:500;
+  text-transform:uppercase; letter-spacing:.16em; color:var(--ink3);
+  margin:32px 0 6px;
+}
+
+/* ── 顶部 ───────────────────────────────────────────────── */
+.top{display:flex; gap:34px; align-items:flex-start; flex-wrap:wrap}
 .top img{
-  width:var(--photo); height:var(--photo);
-  aspect-ratio:1/1; object-fit:cover; object-position:50% 50%;
-  border-radius:6px; flex-shrink:0; display:block;
-  margin-top:5px;          /* 光学对齐:和名字字母顶部齐平 */
+  width:var(--photo); height:var(--photo); aspect-ratio:1/1;
+  object-fit:cover; object-position:50% 50%;
+  border:1px solid var(--rule); border-radius:3px;
+  flex-shrink:0; display:block; margin-top:6px;
 }
-.top .who{flex:1; min-width:280px}
-.affil{margin:0 0 14px}
-.affil span{color:var(--muted)}
-.links{margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:8px 16px}
-.links li{font-size:.94em}
+.top .who{flex:1; min-width:290px}
 
-/* News */
+.affil{margin:0 0 18px; line-height:1.6}
+.affil span{color:var(--ink2)}
+
+.links{
+  margin:0; padding:0; list-style:none;
+  display:flex; flex-wrap:wrap; gap:6px 0;
+  font-family:var(--mono); font-size:.78em; letter-spacing:.02em;
+}
+.links li:not(:last-child)::after{
+  content:"/"; color:var(--ink3); margin:0 12px; border:0;
+}
+.links a{border-bottom-color:transparent}
+.links a:hover{border-bottom-color:var(--maroon)}
+
+/* ── News ───────────────────────────────────────────────── */
 .news{margin:0; padding:0; list-style:none}
-.news li{display:flex; gap:18px; padding:7px 0; align-items:baseline}
-.news time{color:var(--muted); font-size:.88em; white-space:nowrap; min-width:78px;
-           font-variant-numeric:tabular-nums}
+.news li{display:flex; gap:22px; padding:6px 0; align-items:baseline}
+.news time{
+  font-family:var(--mono); font-size:.8em; color:var(--ink3);
+  white-space:nowrap; min-width:74px; font-variant-numeric:tabular-nums;
+  letter-spacing:.01em;
+}
 
-/* 论文 / 专利 */
+/* ── 论文 / 专利 ────────────────────────────────────────── */
 .pubs{margin:0; padding:0; list-style:none}
-.pub{display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--line)}
+.pub{display:flex; gap:16px; padding:17px 0; border-bottom:1px solid var(--rule)}
 .pub:last-child{border-bottom:none}
-.pub .id{
-  color:var(--muted); font-size:.85em; min-width:36px; flex-shrink:0;
-  font-variant-numeric:tabular-nums; padding-top:3px;
+
+.pub .id{                                  /* 引用键,等宽 */
+  font-family:var(--mono); font-size:.755em; color:var(--ink3);
+  min-width:38px; flex-shrink:0; padding-top:4px;
+  font-variant-numeric:tabular-nums; letter-spacing:.01em;
 }
-.pub .body{flex:1}
-.pub .authors{margin:0 0 3px; font-size:.94em; color:var(--muted)}
-.pub .authors b{font-weight:600; color:var(--text)}   /* 自己的名字 */
-.pub .title{margin:0 0 4px}
-.pub .venue{margin:0; color:var(--muted); font-size:.9em}
+.pub .body{flex:1; display:flex; flex-direction:column}
+
+/* 标题排在作者之前 — 浏览时先找标题,不是先找作者 */
+.pub .title  {order:1; margin:0 0 5px; font-size:1.015em; font-weight:500; line-height:1.45}
+.pub .authors{order:2; margin:0 0 7px; font-size:.895em; color:var(--ink2); line-height:1.5}
+.pub .venue  {order:3; margin:0; font-size:.87em; color:var(--ink2)}
+.pub .authors b{font-weight:600; color:var(--ink)}
 .pub .venue em{font-style:italic}
-.tag{
-  display:inline-block; padding:1px 7px; border-radius:3px; margin-right:7px;
-  background:var(--tag-bg); color:var(--muted);
-  font-size:.78em; letter-spacing:.03em; vertical-align:1px;
+
+.tag{                                      /* venue 标签:浅底胶囊 */
+  display:inline-block; margin-right:9px;
+  padding:1px 8px 2px; border-radius:3px;
+  background:var(--tagbg); color:var(--ink2);
+  font-size:.79em; letter-spacing:.03em; vertical-align:1px;
 }
-.tag.hi{background:#fdf2f4; color:#9b1c34; font-weight:600}
-.role{color:var(--text); font-weight:600}
-.note{color:var(--muted); font-size:.86em; margin-top:16px}
+.tag.hi{                                   /* Nature */
+  background:#f9eef1; color:#9b1c34; font-weight:600;
+}
+.role{color:var(--ink); font-weight:600}
+.note{margin-top:18px; font-size:.83em; color:var(--ink3)}
 
-/* 教育 + 奖项 */
+/* ── 教育 + 奖项 ────────────────────────────────────────── */
 .edu{margin:0; padding:0; list-style:none}
-.edu > li{padding:16px 0; border-bottom:1px solid var(--line)}
+.edu > li{padding:19px 0; border-bottom:1px solid var(--rule)}
 .edu > li:last-child{border-bottom:none}
-.edu .when{color:var(--muted); font-size:.9em}
-.edu .meta{margin:5px 0 0; color:var(--muted); font-size:.94em}
-.awards{margin:9px 0 0; padding:0 0 0 18px; color:var(--muted); font-size:.92em}
-.awards li{margin:2px 0}
-.awards .cn{opacity:.72}
+.edu .when{font-size:.875em; color:var(--ink2)}
+.edu .meta{margin:6px 0 0; font-size:.9em; color:var(--ink2)}
 
-/* 技能 */
+.awards{margin:12px 0 0; padding:0; list-style:none; font-size:.885em; color:var(--ink2)}
+.awards li{padding:2px 0 2px 20px; position:relative}
+.awards li::before{                        /* 短横替代圆点 */
+  content:""; position:absolute; left:0; top:.72em;
+  width:9px; height:1px; background:var(--maroon); opacity:.55;
+}
+.awards .cn{color:var(--ink3)}
+
+/* ── 技能 ───────────────────────────────────────────────── */
 .skills{margin:0; padding:0; list-style:none}
-.skills li{display:flex; gap:16px; padding:9px 0; flex-wrap:wrap;
-           border-bottom:1px solid var(--line)}
+.skills li{
+  display:flex; gap:22px; padding:11px 0; flex-wrap:wrap;
+  border-bottom:1px solid var(--rule);
+}
 .skills li:last-child{border-bottom:none}
-.skills .k{min-width:136px; color:var(--muted); font-size:.92em; flex-shrink:0}
-.skills .v{flex:1; min-width:220px}
+.skills .k{
+  min-width:142px; flex-shrink:0;
+  font-family:var(--mono); font-size:.735em; font-weight:500;
+  text-transform:uppercase; letter-spacing:.11em; color:var(--ink3);
+  padding-top:.3em;
+}
+.skills .v{flex:1; min-width:230px}
 
-footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
-       color:var(--muted); font-size:.86em}
+/* ── 页脚 ───────────────────────────────────────────────── */
+footer{
+  margin-top:62px; padding-top:20px; border-top:1px solid var(--rule);
+  font-family:var(--mono); font-size:.755em; color:var(--ink3);
+  letter-spacing:.02em;
+}
 
-@media (max-width:600px){
-  body{margin:0; padding:32px 18px 56px; border:0; box-shadow:none}
-  h2{font-size:1.3em; margin:50px 0 18px}
-  h1 .zh{display:block; margin:6px 0 0; font-size:.45em; letter-spacing:.12em}
-  .top{gap:20px}
+/* ── 手机端 ─────────────────────────────────────────────── */
+@media (max-width:640px){
+  body{margin:0; padding:34px 20px 52px; border:0; box-shadow:none}
+  h1 .zh{display:block; margin:10px 0 0; font-size:.34em; letter-spacing:.14em; vertical-align:0}
+  h2{font-size:1.2em; margin:46px 0 20px}
+  .top{gap:22px}
   .news li{flex-direction:column; gap:0}
-  .news time{min-width:0}
-  .pub{flex-direction:column; gap:4px}
+  .news time{min-width:0; margin-bottom:1px}
+  .pub{flex-direction:column; gap:5px}
   .pub .id{padding-top:0}
+  .skills li{gap:4px}
+  .skills .k{padding-top:0}
+}
+
+/* ── 打印 ───────────────────────────────────────────────── */
+@media print{
+  html,body{background:#fff}
+  body{margin:0; padding:0; max-width:none; border:0; box-shadow:none}
+  a{color:inherit; border-bottom:0}
+  h2{break-after:avoid}
+  .pub,.edu > li{break-inside:avoid}
+}
+
+@media (prefers-reduced-motion:reduce){
+  a{transition:none}
 }
 </style>
 </head>
@@ -236,8 +324,7 @@ footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
 <p>
   Before joining Minnesota I worked on algorithm-based device reliability and compact
   modeling at Peking University. I have 11 publications to date, 4 as first or co-first
-  author, in journals and conferences including <i>Nature</i> and IEEE Transactions on
-  Electron Devices.
+  author, in journals and conferences including <i>Nature</i> and IEEE T-ED.
 </p>
 
 
@@ -263,7 +350,7 @@ footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
     <div class="body">
       <p class="authors">
         Chi Liu<sup>&lowast;#</sup>, Xin-Zhe Wang<sup>#</sup>, <b>Cong Shen<sup>#</sup></b>,
-        Lai-Peng Ma, Xu-Qi Yang, Yue Kong, Wei Ma, Yan Liang, et al.
+        Lai-Peng Ma<sup>#</sup>, Xu-Qi Yang, Yue Kong, Wei Ma, Yan Liang, et al.
       </p>
       <p class="title">A hot-emitter transistor based on stimulated emission of heated carriers</p>
       <p class="venue">
@@ -523,12 +610,12 @@ footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
 </body>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     页面底色备选(改 :root 里的 --page 一行即可)
+     页面底色备选(改 :root 里的 --page 一行)
      ───────────────────────────────────────────────────────────────
-     #f1efec   暖灰(当前)— 和栗色主色最协调
-     #f4f4f2   中性浅灰 — 最克制
-     #f0f2f5   冷灰 — 偏科技感
-     #f5f1ea   米色 — 偏纸质、学术味
-     #eef0ee   灰绿 — 柔和不抢眼
+     #eceef0   冷纸灰(当前)— 像印刷版论文集的纸张
+     #eef0f2   更浅的冷灰
+     #f1efec   暖灰 — 之前那版
+     #eaeef0   偏青灰
+     #edeceb   中性灰
      ═══════════════════════════════════════════════════════════════ -->
 </html>
