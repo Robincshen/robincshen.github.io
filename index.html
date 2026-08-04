@@ -76,7 +76,8 @@
   --muted:  #6b7280;
   --link:   #7a0019;      /* 主色 */
   --line:   #e5e7eb;
-  --bg:     #ffffff;
+  --bg:     #ffffff;      /* 内容白卡 */
+  --page:   #f1efec;      /* 页面底色 — 想换就改这一行,备选见文件底部注释 */
   --tag-bg: #f3f4f6;
   --head:   #7a0019;      /* 板块标题颜色 */
   --rule:   #e3ccd2;      /* 标题下方分隔线,建议用 --head 的浅色调 */
@@ -86,9 +87,12 @@
 }
 
 *{box-sizing:border-box}
+html{background:var(--page)}
 body{
-  margin:0 auto; padding:56px 24px 80px; max-width:var(--width);
+  margin:44px auto; padding:56px 60px 68px; max-width:var(--width);
   background:var(--bg); color:var(--text);
+  border:1px solid #e2ded8;
+  box-shadow:0 1px 3px rgba(40,30,20,.05), 0 8px 24px rgba(40,30,20,.04);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",
               "Noto Sans SC","Microsoft YaHei",Arial,sans-serif;
   font-size:var(--size); line-height:1.7;
@@ -182,7 +186,7 @@ footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
        color:var(--muted); font-size:.86em}
 
 @media (max-width:600px){
-  body{padding:32px 18px 56px}
+  body{margin:0; padding:32px 18px 56px; border:0; box-shadow:none}
   h2{font-size:1.3em; margin:50px 0 18px}
   h1 .zh{display:block; margin:6px 0 0; font-size:.45em; letter-spacing:.12em}
   .top{gap:20px}
@@ -517,4 +521,14 @@ footer{margin-top:56px; padding-top:18px; border-top:1px solid var(--line);
 </footer>
 
 </body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     页面底色备选(改 :root 里的 --page 一行即可)
+     ───────────────────────────────────────────────────────────────
+     #f1efec   暖灰(当前)— 和栗色主色最协调
+     #f4f4f2   中性浅灰 — 最克制
+     #f0f2f5   冷灰 — 偏科技感
+     #f5f1ea   米色 — 偏纸质、学术味
+     #eef0ee   灰绿 — 柔和不抢眼
+     ═══════════════════════════════════════════════════════════════ -->
 </html>
